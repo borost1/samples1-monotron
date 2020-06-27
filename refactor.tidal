@@ -1,0 +1,104 @@
+setcps 0.65
+
+d1 $
+whenmod 32 28 ((# hpf (range 2200 0 $ slow 4 isaw)) . (repeatCycles 4)) $
+--degradeBy (range 0 1 $ slow 8 tri) $
+--whenmod 4 2 degrade $
+--whenmod 4 2 (rev . (|* speed (-1))) $
+--every 8 (jux(# comb (range 0 1 $ slow 2 tri))) $
+--repeatCycles 8 $
+--degradeBy 0.4 $
+--whenmod 16 12 
+--repeatCycles 8 $
+stack [
+    m $
+    --repeatCycles 16 $
+    --((# bpf (range 200 12000 $ slow 16 sine)) . (# bpq 0.3)) $
+    --degrade $
+    cat [
+        sometimesBy 0.1 (stutWith 4 (3/16) ((|* gain 0.9) . (|* lpf 0.7) . (# pan sine))) $
+        stack[
+            s "mk" # begin 0.1
+            ,
+            --m $
+            s "mgab*8?" # begin 0.1 # lpf 200 # rel 0.4 # shape 0.4 # gain 1.2
+            ,
+            s "mlsw*8?" # n (irand 30) # unit "c" |* speed (-8) # shape 0.5 # legato 1 # pan rand
+        ]
+        ,
+        someCyclesBy 0.1 ((hurry 2) . (# hpf (range 0 4000 saw))) $
+        stack [
+            --m $
+            s "mgab(3,8)" # begin 0.1 # lpf 200 # rel 0.4 # shape 0.4 # gain 1.2
+            ,
+            jux(|* speed (-1)) $
+            s "mlsw(6,8,3)" # n (irand 30) # shape 0.5 # unit "c" # speed 8 # lpf 12000
+        ]    
+    ]
+    ,
+    --m $
+    whenmod 16 12 (# hpf (range 0 1200 $ slow 4 saw)) $
+    jux(rev . (|* speed (-1))) $
+    stutWith 16 (3/16) ((|+ up 5)) $
+    stack[
+        s "mgab" # begin 0.1 # lpf 200 # rel 0.4 # shape 0.4 # gain 1.2
+        ,
+        s "mgab" # begin 0.1 # lpf 200 # rel 0.4 # shape 0.4 # gain 1.2 
+    ]
+    ,
+    m $
+    jux(rev . (|* speed (-1))) $
+    stutWith 16 (3/16) ((|+ up 5)) $
+    stack [
+        s "mssl" # n (irand 8) # rel 0.1
+        ,
+        s "mssl" # n (irand 8) # rel 0.1
+    ]
+    ,
+    m $
+    --repeatCycles 4 $
+    ((someCyclesBy 0.4 ((# delay 0.5) . (# delayt (cycleChoose [(3/32), (1/16), (1/32)])) . (# delayfb 0.8) . (# orbit 1))) . (degradeBy 0.7)) $
+    --degradeBy 0.2 $
+    --every 2 (m) $
+    s "mlsl*16" # gain "[1 0.8]*8" # speed 16 # n (irand 30) # legato 1
+]
+
+d2 $ 
+(# pan sine) $
+sometimes (|* speed (-1)) $
+loopAt 4 $ striateBy 1280 (1/28) $ s "mlsw/8" # n (irand 30) # gain 0.9 # bpf 1200
+
+
+
+
+
+-- for effects
+d1 $
+--m $
+whenmod 16 12 (# hpf (range 0 1200 $ slow 4 saw)) $
+jux(rev . (|* speed (-1))) $
+stutWith 16 (3/16) ((|+ up 5)) $
+stack[
+    s "mgab" # begin 0.1 # lpf 200 # rel 0.4 # shape 0.4 # gain 1.2
+    ,
+    s "mgab" # begin 0.1 # lpf 200 # rel 0.4 # shape 0.4 # gain 1.2 
+]
+
+d1 $ silence
+
+xfade 2 silence
+
+d2 $
+cat [
+    --((# delay 0.5) . (# delayfb 0.7) . (# delayt (3/8))) $
+    ((# room 0.5) . (# sz (range 0 1 $ slow 8 sine))) $
+    (# gain (range 0.8 0 $ fast 8 square)) $
+    (# nudge (range 0 1 $ slow 4 sine)) $
+    --slow 2 $
+    --(# coarse (irand 10)) $
+    ((choose [(1/16), (1/8), (1/12)]) <~) $
+    (# pan rand) $
+    jux(rev) $
+    striateBy 360 (1/36) $ 
+    s "mlsw" # n (irand 30) # unit "c" |* speed 1 # gain 0.8
+]

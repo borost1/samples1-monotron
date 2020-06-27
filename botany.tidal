@@ -1,0 +1,51 @@
+--BOTANY
+
+setcps 0.7
+
+xfadeIn 1 16 silence
+
+xfadeIn 1 16 $
+stack [
+    m $
+    --jux(# comb (range 0 0.7 $ slow 4 tri)) $
+    (juxBy (range 0 1 $ slow 8 sine) 
+        (
+            (id)
+            -- .(|* speed "<1 1 2 1.5>")
+        )
+    ) $
+    (# lpf (range 1200 12000 $ slow 16 sine)) $
+    ((# room (range 0 0.4 $ slow 32 tri)) . (# sz 0.9) . (# orbit 1)) $
+    rev $
+    stutWith 8 (3/16) ((|* gain 0.9)) $
+    --juxBy 0.3(rev . (ply 4)) $
+    note "c5'maj d5'sus2 e5'min ~" # s "msh" # n 9 # rel 0.3 # gain 0.9
+    ,
+    m $
+    cat[s "mgab:4*2", s "mgab:4*2", s "mgab:4*2", s "mgab:4(3,8)"] # rel 1 # shape 0.2 # gain 1.2 # lpf 400
+    ,
+    m $
+    rev $ 
+    note "[g2(3,8)]" # s "msh:9" # rel 0.5 # gain 1.2 # shape 0.3 # lpf (range 400 4000 $ slow 12 tri) # lpq (range 0 0.3 $ slow 3 tri)
+    ,
+    m $
+    whenmod 8 7 (stutWith 3 (3/16) ((|* gain 0.9))) $
+    s "[~ mgab]" # speed 4 # n 3 # rel 0.3 # hpf 1200
+    ,
+    m $
+    rev $
+    stutWith 32 (1/16) ((|* gain 0.95)) $
+    note "<c6 g6 a6 <f6 b6 c7 b6>>(<3 5>,8)" # s "msh:9" # bpf (range 200 800 $ slow 16 sine) # gain 0.9 # orbit 1
+    ,
+    m $
+    jux(rev) $
+    --plyWith 4 ((|* gain 0.95) . (|* speed (range (-1) 1 $ slow 2 sine))) $
+    s "[~ mssw]*2" # n 5 # unit "c" # rel 1.5 # begin 0.4
+    ,
+    --m $
+    repeatCycles 16 $
+    --sometimes ((|* speed (-1))) $
+    --sometimesBy 0.1 (ply 8) $
+    (rev . (stutWith 4 (1/16) ((|* gain 0.9) . (|* speed 1.1)))) $
+    s "{mssl:1 mlsl:2 mssl:3}%4" # speed "{4 10 4}%4" # pan (range 0.3 0.7 $ slow 4 sine) # hpf 3200 # rel 0.2 # crush (2+(irand 6))
+]

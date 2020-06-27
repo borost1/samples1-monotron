@@ -1,0 +1,50 @@
+setcps 0.7
+
+d1 $
+--whenmod 32 30 (rot 5) $
+whenmod 16 14 (# hpf (range 0 1200 $ slow 2 saw)) $
+stack [
+    m $
+    whenmod 8 6 ((# lpf (range 600 12000 $ slow 2 isaw)) . (# lpq 0.3)) $
+    sometimesBy 0.4 ((# room rand) . (# sz rand) . (# orbit 1) . (# pan (range 0.2 0.8 rand))) $
+    sometimesBy 0.2 (
+        stutWith 8 (choose [(3/25), (3/50), (3/10)]) 
+        ((|* gain 0.9) . (|* speed (choose [1.2, (-1.2)])))
+    ) $
+    degradeBy 0.2 $
+    whenmod 12 10 (# coarse (run 50)) $
+    (# n (segment 60 (range 0 10 $ slow 4 tri))) $
+    fast 2 $
+    cat[s "mssl(3,5)", s "mssl(3,5)", s "mssl(3,5)", "~"] # 
+    unit "c" |* speed (choose [10, (-10)]) # gain 1 #
+    attack (range 0 0.5 $ slow 4 sine) # rel (range 0.5 0 $ slow 4 sine)
+    ,
+    m $
+    degradeBy 0.2 $
+    whenmod 8 6 (# hpf 1200) $
+    s "mk(3,5)" # gain 1.2 # rel 0.2 # n 2
+    ,
+    m $
+    s "<[~ mgab] [~ mgab] [~ ~ mgab*5? ~ ~] [~ ~ mgab ~ mgab*1?]>" # n 3 # unit "c" |* speed 10 # rel 0.2
+    ,
+    --m $
+    s "mlsw/16" # n (irand 30) # unit "c" |/ speed 8
+    ,
+    --m $
+    note "<c5 e5 ds5>" # s "msh:5" # att 0.5 # lpf (range 200 12000 $ slow 10 sine)
+    ,
+    --m $
+    juxBy 0.3 (rev . (plyWith 25 (|* gain 0.9))) $ note "<c7'min7 e7'minor7 ds7'maj7>" # s "msh:5" # rel 0.3 #
+    bpf (range 200 4000 $ slow 8 $ cat[sine,square,sine,saw])
+    ,
+    m $
+    (|+ up 12) $
+    note "<[~ c8 e8 g8 b7]*2>" # s "msh:5" # hpf 1800 # rel 0.1 # lpf (range 400 6000 $ slow 2.5 sine)
+    ,
+    m $
+    stutWith 8 (2/10) ((|* gain 0.9)) $
+    s "mlsw/12" # unit "c"
+    ,
+    m $
+    s "[mssl ~ mssl ~ mssl]*2" # n 7 # speed 2 # gain (range 1 0.5 saw) # hpf 2000
+]
